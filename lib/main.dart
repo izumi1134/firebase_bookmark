@@ -17,7 +17,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -107,9 +106,41 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 onLongPress: () async {
-                  final db = FirebaseFirestore.instance;
-                  await db.collection("users").doc(user.id).delete();
-                  _fetchFirebaseData();
+                  bool confirmDelete = await showDialog(
+                    //boolは真偽を入力できる値
+                    //async awaitで選ばれるまで待つ
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        //確認のダイアログが出現
+                        title: Text("リストの削除"),
+                        content: Text("本当に削除しますか？"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              //ボタンを押すと……
+                              Navigator.pop(context, false);
+                              //falseなのでキャンセルが選択された場合
+                            },
+                            child: Text("キャンセル"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                              //trueなので"はい"が選択された場合
+                            },
+                            child: Text("削除"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (confirmDelete == true) {
+                    //if(もしも)true(はい・テキストにおける"削除")が選択された場合は削除する
+                    final db = FirebaseFirestore.instance;
+                    await db.collection("users").doc(user.id).delete();
+                    _fetchFirebaseData();
+                  }
                 },
               ),
             )

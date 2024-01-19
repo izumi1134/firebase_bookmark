@@ -1,11 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class AddPage extends StatelessWidget {
+class AddPage extends StatefulWidget {
   AddPage({Key? key}) : super(key: key);
 
+  @override
+  _AddPageState createState() => _AddPageState();
+}
+
+class _AddPageState extends State<AddPage> {
   String first = '';
   String last = '';
+  int? birthYear;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +37,14 @@ class AddPage extends StatelessWidget {
                 last = text;
               },
             ),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Birth Year',
+              ),
+              onChanged: (text) {
+                birthYear = int.tryParse(text);
+              },
+            ),
             ElevatedButton(
               onPressed: () async {
                 await _addToFirebase();
@@ -50,7 +64,7 @@ class AddPage extends StatelessWidget {
     final user = <String, dynamic>{
       "first": first,
       "last": last,
-      "born": 1991,
+      "born": birthYear,
     };
 
 // Add a new document with a generated ID
